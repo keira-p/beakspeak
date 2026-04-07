@@ -1,14 +1,9 @@
 # Python
 __pycache__/
 *.pyc
-*.pyo
-*.pyd
-.Python
 
-# Environments
+# Environment
 .env
-.venv/
-venv/
 
 # Jupyter
 .ipynb_checkpoints/
@@ -16,30 +11,8 @@ venv/
 # Mac
 .DS_Store
 
-# Data / models
-data/*
-!data/.gitkeep
+# Data (VERY important)
+raw_data/
 
-models/*
-!models/.gitkeep
-
-mlruns/*
-!mlruns/.gitkeep
-
-registry/*
-!registry/.gitkeep
-
-screenshots/*
-!screenshots/.gitkeep
-
-pitch/*
-
-# Testing / coverage
-.pytest_cache/
-.coverage
-htmlcov/
-
-# Build
-build/
-dist/
-*.egg-info/
+# MLflow runs (can get big + messy)
+mlruns/
