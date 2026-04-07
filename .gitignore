@@ -12,7 +12,10 @@ __pycache__/
 .DS_Store
 
 # Data (VERY important)
-raw_data/
+data/
 
 # MLflow runs (can get big + messy)
 mlruns/
+
+# Picth deck
+pitch/
