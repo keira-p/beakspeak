@@ -11,11 +11,21 @@ __pycache__/
 # Mac
 .DS_Store
 
-# Data (VERY important)
+# Data
 data/
 
-# MLflow runs (can get big + messy)
+# MLflow runs
 mlruns/
+mlruns.db
 
-# Picth deck
+# Pitch deck
 pitch/
+
+# Models
+models/
+*.h5
+*.keras
+*.pt
+notebooks/*.png
+notebooks/*.jpg
+notebooks/*.jpeg

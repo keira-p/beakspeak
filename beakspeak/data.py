@@ -1,9 +1,12 @@
 from pathlib import Path
 import pandas as pd
+import tensorflow as tf
 
 from sklearn.model_selection import train_test_split
 
 DATA_DIR = Path("../data/raw_data/CUB_200_2011")
+
+from beakspeak.params import IMG_HEIGHT, IMG_WIDTH, BATCH_SIZE, AUTOTUNE, SEED
 
 
 def load_metadata(metadata_path):
@@ -66,3 +69,82 @@ def split_data(metadata, test_size=0.2, random_state=42):
         )
 
     return train_df, val_df, test_df
+
+
+def load_and_preprocess_image(file_path, label):
+    """
+    Load and preprocess a single image.
+
+    Inputs:
+    - file_path: Path to the image file
+    - label: Integer class label
+
+    Outputs:
+    - image: Preprocessed image tensor of shape (224, 224, 3)
+    - label: Unchanged integer class label
+    """
+
+    # Read raw file
+    image = tf.io.read_file(file_path)
+
+    # Decode JPEG into 3-channel RGB image
+    image = tf.image.decode_jpeg(image, channels=3)
+
+    # Set image shape
+    image.set_shape([None, None, 3])
+
+    # Resize for CNN processing and preserve aspect ratio
+    image = tf.image.resize(image, [IMG_HEIGHT, IMG_WIDTH], preserve_aspect_ratio=True)
+
+    # Pad to ensure final size is (224, 224)
+    image = tf.image.resize_with_pad(image, IMG_HEIGHT, IMG_WIDTH)
+
+    # Scale pixel values to [0, 1]
+    image = image / 255.0
+
+    return image, label
+
+
+def create_dataset(df, shuffle=True):
+    """
+    Create a TensorFlow dataset from a DataFrame of image paths and labels.
+
+    Parameters:
+    - df: DataFrame with 'file_path' and 'label' columns
+    - shuffle: True for train, False for val/test
+
+    Returns:
+    - A batched tf.data.Dataset object
+    """
+
+    # Create dataset from pairs of image paths and labels
+    dataset = tf.data.Dataset.from_tensor_slices(
+        (
+            df["file_path"].astype(str).values,
+            df["label"].values
+        )
+    )
+
+    # Shuffle for training across length of training set
+    # Not for validation/test
+    if shuffle:
+        dataset = dataset.shuffle(
+            buffer_size=len(df),
+            seed=SEED
+        )
+
+    # Map the loading and preprocessing function across the dataset
+    dataset = dataset.map(
+        load_and_preprocess_image,
+        num_parallel_calls=AUTOTUNE
+    )
+
+    # Batch the dataset for efficient training
+    dataset = dataset.batch(BATCH_SIZE)
+
+    # Prefetch to improve performance
+    # Overlapping data preprocessing and model execution
+    # (Fetches the next batch while the current batch is being processed)
+    dataset = dataset.prefetch(AUTOTUNE)
+
+    return dataset
