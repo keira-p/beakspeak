@@ -71,13 +71,15 @@ def split_data(metadata, test_size=0.2, random_state=42):
     return train_df, val_df, test_df
 
 
-def load_and_preprocess_image(file_path, label):
+def load_and_preprocess_image(file_path, label, scaling=False):
     """
     Load and preprocess a single image.
 
     Inputs:
     - file_path: Path to the image file
     - label: Integer class label
+    - scaling: Boolean indicating whether to scale pixel values
+
 
     Outputs:
     - image: Preprocessed image tensor of shape (224, 224, 3)
@@ -99,19 +101,22 @@ def load_and_preprocess_image(file_path, label):
     # Pad to ensure final size is (224, 224)
     image = tf.image.resize_with_pad(image, IMG_HEIGHT, IMG_WIDTH)
 
-    # Scale pixel values to [0, 1]
-    image = image / 255.0
+     # Scale if not using backbone-specific preprocessing
+    if scaling:
+        image = image / 255.0
 
     return image, label
 
 
-def create_dataset(df, shuffle=True):
+def create_dataset(df, shuffle=True, scaling=False):
     """
     Create a TensorFlow dataset from a DataFrame of image paths and labels.
 
     Parameters:
     - df: DataFrame with 'file_path' and 'label' columns
     - shuffle: True for train, False for val/test
+    - scaling: Whether to scale pixel values to [0, 1]
+    (True for baseline CNN, False for transfer learning)
 
     Returns:
     - A batched tf.data.Dataset object
@@ -135,7 +140,11 @@ def create_dataset(df, shuffle=True):
 
     # Map the loading and preprocessing function across the dataset
     dataset = dataset.map(
-        load_and_preprocess_image,
+        lambda file_path, label: load_and_preprocess_image(
+            file_path,
+            label,
+            scaling=scaling
+        ),
         num_parallel_calls=AUTOTUNE
     )
 
