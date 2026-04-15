@@ -1,5 +1,6 @@
 import os
 from dotenv import load_dotenv
+from pathlib import Path
 
 load_dotenv()
 
@@ -16,6 +17,10 @@ SEED = int(os.getenv("SEED", 42))
 
 # --- dataset ---
 NUM_CLASSES = int(os.getenv("NUM_CLASSES", 200))
+
+## --- paths ---
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+DATA_DIR = PROJECT_ROOT / "data" / "raw_data" / "CUB_200_2011"
 
 # --- tf performance ---
 AUTOTUNE = None  # set in notebook as tf.data.AUTOTUNE

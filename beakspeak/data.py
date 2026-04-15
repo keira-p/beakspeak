@@ -1,12 +1,13 @@
 from pathlib import Path
+
 import pandas as pd
+import numpy as np
+from PIL import Image
 import tensorflow as tf
 
 from sklearn.model_selection import train_test_split
 
-DATA_DIR = Path("../data/raw_data/CUB_200_2011")
-
-from beakspeak.params import IMG_HEIGHT, IMG_WIDTH, BATCH_SIZE, AUTOTUNE, SEED
+from beakspeak.params import DATA_DIR, IMG_HEIGHT, IMG_WIDTH, BATCH_SIZE, AUTOTUNE, SEED
 
 
 def load_metadata(metadata_path):
@@ -157,3 +158,29 @@ def create_dataset(df, shuffle=True, scaling=False):
     dataset = dataset.prefetch(AUTOTUNE)
 
     return dataset
+
+
+def preprocess_uploaded_image(image: Image.Image):
+    """
+    Preprocess a PIL image for inference with EfficientNet.
+
+    Args:
+        image (PIL.Image): Uploaded image
+
+    Returns:
+        np.array: Preprocessed image tensor ready for model
+    """
+
+    # Resize
+    image = image.resize((IMG_WIDTH, IMG_HEIGHT))
+
+    # Convert to array
+    image = np.array(image)
+
+    # Add batch dimension
+    image = np.expand_dims(image, axis=0)
+
+    # EfficientNet preprocessing
+    image = tf.keras.applications.efficientnet.preprocess_input(image)
+
+    return image
