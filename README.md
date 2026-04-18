@@ -4,7 +4,7 @@ BeakSpeak is a project setting out to understand the subtle differences between 
 
 Fine-grained image classification is hard - many bird species look almost identical to both humans and models. This project explores how far we can push visual classification, and where it starts to break.
 
-👉 [Live demo]("https://beakspeak-309693526010.europe-west2.run.app/")
+👉 [**Live demo** (Streamlit)]("https://beakspeak-309693526010.europe-west2.run.app/")
 
 ### 🎯 Goals
 
@@ -130,7 +130,8 @@ Docker
 
 Google Cloud Run
 
-### 💡 Why this project
+
+### 💡 Why this project
 
 This project brings together:
 
