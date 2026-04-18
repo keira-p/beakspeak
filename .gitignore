@@ -12,7 +12,11 @@ __pycache__/
 .DS_Store
 
 # Data
-data/
+data/**
+!data/raw_data/
+!data/raw_data/CUB_200_2011/
+data/raw_data/CUB_200_2011/**
+!data/raw_data/CUB_200_2011/classes.txt
 
 # MLflow runs
 mlruns/
@@ -22,9 +26,10 @@ mlruns.db
 pitch/
 
 # Models
-models/
+models/**
+!models/efficientnetb0_fine_tuned.keras
+
 *.h5
-*.keras
 *.pt
 notebooks/*.png
 notebooks/*.jpg

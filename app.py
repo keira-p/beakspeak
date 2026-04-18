@@ -2,11 +2,12 @@ from PIL import Image
 import re
 import streamlit as st
 import numpy as np
+import pandas as pd
 import tensorflow as tf
 from PIL import Image
 
 from pathlib import Path
-from beakspeak.data import load_metadata, preprocess_uploaded_image
+from beakspeak.data import preprocess_uploaded_image
 from beakspeak.params import DATA_DIR
 
 CONFIDENCE_THRESHOLD = 0.53
@@ -173,13 +174,15 @@ def get_display_name(name):
 MODEL_PATH = Path("models/efficientnetb0_fine_tuned.keras")
 model = tf.keras.models.load_model(MODEL_PATH)
 
-# --- Load class mapping ---
-metadata_df = load_metadata(DATA_DIR)
 
-class_map = (
-    metadata_df[["class_id", "class_name"]]
-    .drop_duplicates()
-    .sort_values("class_id")
+# --- Load class mapping ---
+classes_path = DATA_DIR / "classes.txt"
+
+class_map = pd.read_csv(
+    classes_path,
+    sep=" ",
+    header=None,
+    names=["class_id", "class_name"]
 )
 
 def clean_name(name):
