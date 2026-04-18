@@ -5,8 +5,6 @@ import numpy as np
 from PIL import Image
 import tensorflow as tf
 
-from sklearn.model_selection import train_test_split
-
 from beakspeak.params import DATA_DIR, IMG_HEIGHT, IMG_WIDTH, BATCH_SIZE, AUTOTUNE, SEED
 
 
@@ -56,6 +54,8 @@ def split_data(metadata, test_size=0.2, random_state=42):
     Returns:
         train_df, val_df, test_df (pd.DataFrame): DataFrames for training, validation, and test sets.
     """
+
+    from sklearn.model_selection import train_test_split
 
     # Separate out test set
     test_df = metadata[metadata["split"] == "test"].copy().reset_index(drop=True)
